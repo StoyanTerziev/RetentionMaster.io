@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "retentionmaster": {
+      "command": "node",
+      "args": ["mcp/server.js"],
+      "env": {
+        "RM_APP_ID": "rm_app_xxx",
+        "RM_APP_SECRET": "rmsec_xxx"
+      }
+    }
+  }
+}

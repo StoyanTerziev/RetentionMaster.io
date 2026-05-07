@@ -1,0 +1,194 @@
+openapi: 3.0.3
+info:
+  title: RetentionMaster Public API
+  version: "1.0.0"
+  description: Server-to-server API for pulling RetentionMaster sites, events, gathered leads, and analytics summaries.
+servers:
+  - url: https://retentionmaster.io/api/v1
+security:
+  - bearerAppSecret: []
+  - appIdHeader: []
+    appSecretHeader: []
+paths:
+  /me:
+    get:
+      summary: Inspect authenticated app
+      security:
+        - bearerAppSecret: []
+        - appIdHeader: []
+          appSecretHeader: []
+      responses:
+        "200":
+          description: Authenticated app context
+  /sites:
+    get:
+      summary: List sites available to the app
+      security:
+        - bearerAppSecret: []
+        - appIdHeader: []
+          appSecretHeader: []
+      responses:
+        "200":
+          description: Site list
+  /events:
+    get:
+      summary: Pull raw RetentionMaster event rows
+      security:
+        - bearerAppSecret: []
+        - appIdHeader: []
+          appSecretHeader: []
+      parameters:
+        - name: site_id
+          in: query
+          schema:
+            oneOf:
+              - type: integer
+              - type: string
+                enum: [all]
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [today, last7, week, last15, mtd, all]
+            default: last15
+        - name: start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: action_code
+          in: query
+          schema:
+            type: string
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 500
+            default: 100
+      responses:
+        "200":
+          description: Event rows
+  /leads:
+    get:
+      summary: Pull gathered lead payloads
+      description: Returns collected lead fields grouped into lead records by source id. Requires the leads:read scope.
+      security:
+        - bearerAppSecret: []
+        - appIdHeader: []
+          appSecretHeader: []
+      parameters:
+        - name: site_id
+          in: query
+          schema:
+            oneOf:
+              - type: integer
+              - type: string
+                enum: [all]
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [today, last7, week, last15, mtd, all]
+            default: last15
+        - name: start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: field
+          in: query
+          description: Exact captured field path. Alias of field_path.
+          schema:
+            type: string
+        - name: field_path
+          in: query
+          description: Exact captured field path.
+          schema:
+            type: string
+        - name: popup_id
+          in: query
+          description: Retention asset identifier.
+          schema:
+            type: string
+        - name: action_code
+          in: query
+          schema:
+            type: string
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 250
+            default: 100
+      responses:
+        "200":
+          description: Lead records
+  /summary:
+    get:
+      summary: Pull aggregate RetentionMaster event totals
+      security:
+        - bearerAppSecret: []
+        - appIdHeader: []
+          appSecretHeader: []
+      parameters:
+        - name: site_id
+          in: query
+          schema:
+            oneOf:
+              - type: integer
+              - type: string
+                enum: [all]
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [today, last7, week, last15, mtd, all]
+            default: last15
+        - name: start
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: Aggregate totals
+components:
+  securitySchemes:
+    bearerAppSecret:
+      type: http
+      scheme: bearer
+      bearerFormat: APP_ID.APP_SECRET
+    appIdHeader:
+      type: apiKey
+      in: header
+      name: X-RM-App-Id
+    appSecretHeader:
+      type: apiKey
+      in: header
+      name: X-RM-App-Secret
