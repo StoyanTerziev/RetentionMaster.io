@@ -132,4 +132,5 @@ Optional env vars:
 - `examples/curl.sh` - shell examples
 - `examples/node.js` - Node fetch example
 - `examples/php.php` - PHP cURL example
+- `examples/python.py` - Python standard library example
 - `mcp/server.js` - local stdio MCP server
